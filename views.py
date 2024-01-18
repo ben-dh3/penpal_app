@@ -1,11 +1,17 @@
 """
 views imports app, auth, and models, but none of these import views
 """
+import os
 from flask import Flask, session, request, render_template, redirect
 from datetime import datetime
-from app import app, sanitizer
+from werkzeug.utils import secure_filename
+from app import app, sanitizer, ALLOWED_EXTENSIONS
 from models import User, Post
 import re
+
+def allowed_file(filename):
+    check = str(filename).split('.')[1]
+    return check.split("'")[0].lower() in ALLOWED_EXTENSIONS
 
 @app.route("/")
 def get_users():
@@ -70,6 +76,13 @@ def signup_post():
     email = request.form['email']
     password = request.form['password']
     nationality = request.form['nationality']
+    profile_picture = request.files['profile_picture']
+    # secure file
+    if allowed_file(profile_picture):
+            profile_picture.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(profile_picture.filename)))
+            print("here")
+    else:
+        return "no"
     # name must be unique
     try:
         User.get(User.name == name)
@@ -80,9 +93,10 @@ def signup_post():
             return render_template('users/signup_error.html')
         if re.match(r"^\S+@\S+\.\S+$", email, re.I) and re.match(r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", password):
             try:
-                User.create(name=name, email=email, password=password, nationality=nationality)
+                User.create(name=name, email=email, password=password, nationality=nationality, profile_picture=secure_filename(profile_picture.filename))
                 return render_template('users/signup_success.html')
             except:    
                 return "Email associated with another account"
         else:
             return render_template('users/signup_error.html')
+        

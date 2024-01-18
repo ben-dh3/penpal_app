@@ -3,7 +3,6 @@ models imports app, but app does not import models so we haven't created
 any loops.
 """
 from peewee import *
-
 from app import db
 
 # model class -> database table
@@ -13,6 +12,7 @@ class User(Model):
     email = CharField(unique=True) 
     password = CharField()
     nationality = CharField()
+    profile_picture = CharField()
 
     class Meta:
         database = db # This model uses the "peewee_app.db" database.

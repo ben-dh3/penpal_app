@@ -16,7 +16,7 @@ def create_tables():
     # flask-peewee database wrapper:
     db.drop_tables([User, Post])
     db.create_tables([User, Post], safe=True)
-    user1 = User(name='Ben DH', email='benjaminduffield1997@gmail.com', password='password123', nationality='United Kingdom')
+    user1 = User(name='Ben DH', email='benjaminduffield1997@gmail.com', password='password123', nationality='United Kingdom', profile_picture='ben.jpg')
     user1.save()
 
 if __name__ == '__main__':
