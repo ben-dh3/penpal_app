@@ -1,0 +1,22 @@
+<!-- This is a HTML document -->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    </head>
+    <body>
+        <a href="/">Penpal 🦅</a>
+        <h2>My Account</h2>
+        <p>
+            <a href="/logout">Log Out</a>
+        </p>
+        <ul>
+            {% for post in posts %}
+                <div>
+                    <p>Name: {{post.user}}</p>
+                    <p>Message: {{post.message}}</p>
+                    <p>Time: {{post.time}}</p>
+                </div>
+            {% endfor %}
+        </ul>
+    </body>
+</html>
