@@ -11,6 +11,7 @@ pytest-playwright = "*"
 pytest-xprocess = "*"
 py = "*"
 peewee = "*"
+html-sanitizer = "*"
 
 [dev-packages]
 autopep8 = "*"

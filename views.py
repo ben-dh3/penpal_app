@@ -3,8 +3,9 @@ views imports app, auth, and models, but none of these import views
 """
 from flask import Flask, session, request, render_template, redirect
 from datetime import datetime
-from app import app
+from app import app, sanitizer
 from models import User, Post
+import re
 
 @app.route("/")
 def get_users():
@@ -22,14 +23,14 @@ def penpal_post():
     recipient_name = request.form['name']
     recipient_id = User.get(User.name == recipient_name).id
     sender_id = User.get(User.id == user_id).id
-    message = request.form['message']
+    message = sanitizer.sanitize(request.form.get('message'))
     t = datetime.now()
     time = t.strftime("%H:%M:%S")
     try:
         Post.create(message=message, time=time, sender_id=sender_id, recipient_id=recipient_id)
-        return render_template('users/signup_success.html')
+        return "Message sent"
     except:    
-        return "account exists"
+        return "Message failed"
 
 
 # This route simply returns the login page
@@ -65,12 +66,23 @@ def signup():
 
 @app.route('/signup', methods=['POST'])
 def signup_post():
-    name = request.form['name']
+    name = sanitizer.sanitize(request.form.get('name'))
     email = request.form['email']
     password = request.form['password']
-    nationality = request.form['nationality']  
+    nationality = request.form['nationality']
+    # name must be unique
     try:
-        User.create(name=name, email=email, password=password, nationality=nationality)
-        return render_template('users/signup_success.html')
-    except:    
-        return "account exists"
+        User.get(User.name == name)
+        return render_template('users/username_not_unique.html')
+    except:
+    # check email and password are valid
+        if email is None or password is None or name is None or nationality is None:
+            return render_template('users/signup_error.html')
+        if re.match(r"^\S+@\S+\.\S+$", email, re.I) and re.match(r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", password):
+            try:
+                User.create(name=name, email=email, password=password, nationality=nationality)
+                return render_template('users/signup_success.html')
+            except:    
+                return "Email associated with another account"
+        else:
+            return render_template('users/signup_error.html')
