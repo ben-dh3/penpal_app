@@ -26,8 +26,8 @@ def get_users():
 def penpal_post():
     user_id = session.get("user_id")
     # find recipient
-    recipient_name = request.form['name']
-    recipient_id = User.get(User.name == recipient_name).id
+    recipient_name = request.form['username']
+    recipient_id = User.get(User.username == recipient_name).id
     sender_id = User.get(User.id == user_id).id
     message = sanitizer.sanitize(request.form.get('message'))
     t = datetime.now()
@@ -72,31 +72,46 @@ def signup():
 
 @app.route('/signup', methods=['POST'])
 def signup_post():
-    name = sanitizer.sanitize(request.form.get('name'))
+    username = sanitizer.sanitize(request.form.get('username'))
     email = request.form['email']
     password = request.form['password']
-    nationality = request.form['nationality']
+    hometown = request.form['hometown']
     profile_picture = request.files['profile_picture']
     # secure file
     if allowed_file(profile_picture):
             profile_picture.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(profile_picture.filename)))
-            print("here")
     else:
-        return "no"
+        return render_template('users/signup_error.html')
     # name must be unique
     try:
-        User.get(User.name == name)
+        User.get(User.username == username)
         return render_template('users/username_not_unique.html')
     except:
     # check email and password are valid
-        if email is None or password is None or name is None or nationality is None:
+        if email is None or password is None or username is None or hometown is None or profile_picture is None:
             return render_template('users/signup_error.html')
         if re.match(r"^\S+@\S+\.\S+$", email, re.I) and re.match(r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", password):
             try:
-                User.create(name=name, email=email, password=password, nationality=nationality, profile_picture=secure_filename(profile_picture.filename))
+                User.create(username=username, email=email, password=password, hometown=hometown, profile_picture=secure_filename(profile_picture.filename))
+                user_id = User.get((User.email == email) & (User.password == password)).id
+                # Set the user ID in session
+                session['user_id'] = user_id
+                # Create automated message
+                message = "Welcome to Penpal, thankyou for signing up!"
+                t = datetime.now()
+                time = t.strftime("%H:%M:%S")
+                Post.create(message=message, time=time, sender_id=1, recipient_id=user_id)
+
                 return render_template('users/signup_success.html')
             except:    
                 return "Email associated with another account"
         else:
             return render_template('users/signup_error.html')
-        
+
+@app.route("/messages")
+def get_messages():
+    if not session.get("user_id"):
+        return redirect('/login')
+    user_id = session.get("user_id")
+    posts = Post.select().where(Post.sender_id == user_id and Post.recipient_id == user_id)
+    return render_template('posts/account.html', posts=posts)

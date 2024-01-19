@@ -8,10 +8,10 @@ from app import db
 # model class -> database table
 class User(Model):
     id = AutoField()
-    name = CharField()
+    username = CharField()
     email = CharField(unique=True) 
     password = CharField()
-    nationality = CharField()
+    hometown = CharField()
     profile_picture = CharField()
 
     class Meta:

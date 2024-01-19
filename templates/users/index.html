@@ -9,11 +9,11 @@
             {% for user in users %}
                 <div>
                     <img src="static/images/{{user.profile_picture}}" alt="{{user.profile_picture}}" width="120" height="90"/>
-                    <p>Name: {{user.name}}</p>
-                    <p>Nationality: {{user.nationality}}</p>
+                    <p>Username: {{user.username}}</p>
+                    <p>Hometown: {{user.hometown}}</p>
                         <form action="/" method="POST">
                         <p >
-                            <input type="hidden" id="name" name="name" value="{{user.name}}">
+                            <input type="hidden" id="username" name="username" value="{{user.username}}">
                             <label form="message">Message</label>
                             <br>
                             <input type="text" name="message" id="message">
@@ -25,7 +25,5 @@
                 </div>
             {% endfor %}
         </ul>
-
-        
     </body>
 </html>

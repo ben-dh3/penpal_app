@@ -5,14 +5,14 @@
     </head>
     <body>
         <a href="/">Penpal 🦅</a>
-        <h2>My Account</h2>
+        <h2>Messages</h2>
         <p>
             <a href="/logout">Log Out</a>
         </p>
         <ul>
             {% for post in posts %}
                 <div>
-                    <p>Name: {{post.user}}</p>
+                    <p>Posts</p>
                     <p>Message: {{post.message}}</p>
                     <p>Time: {{post.time}}</p>
                 </div>
