@@ -2,8 +2,22 @@
 <html lang="en">
     <head>
         <title>Login</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+        <script>
+            tailwind.config = {
+                theme: {
+                extend: {
+                    fontFamily: {
+                    poppins: ["Poppins"],
+                    },
+                },
+                },
+            };
+            </script>
     </head>
     <body>
+
         <h1>Login</h1>
         <form action="/login" method="POST">
             <p>

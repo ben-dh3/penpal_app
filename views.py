@@ -113,5 +113,32 @@ def get_messages():
     if not session.get("user_id"):
         return redirect('/login')
     user_id = session.get("user_id")
-    posts = Post.select().where(Post.sender_id == user_id and Post.recipient_id == user_id)
-    return render_template('posts/account.html', posts=posts)
+
+    posts_sent = []
+
+    def find_username(id):
+        return User.get(User.username, User.hometown, User.profile_picture, Post.sender_id, Post.recipient_id).join(Post, on=Post.sender_id).where(Post.sender_id == id)
+    print(find_username(1))
+
+    
+    # for post in User.select(Post.message, Post.sender_id, User.username, User.hometown, User.profile_picture).join(Post, on=Post.sender_id).where(Post.sender_id == user_id):
+        
+        # class SentPost:
+        #     def __init__(self, message, time, username, hometown, profile_picture):
+        #         self.message = message
+        #         self.time = time
+        #         self.username = username
+        #         self.hometown = hometown
+        #         self.profile_picture = profile_picture
+
+        #     def __repr__(self):
+        #         return f"SentPost({self.message}, {self.time}, {self.username}, {self.user_id})"
+        
+        # posts.append(User(post.post.message, post.username))
+        # print(post.username, '->', post.post.message)
+        # print("here")
+
+    # print(posts)
+    return "work"
+    # posts = Post.select(Post.message, Post.time, User.username).join(User).where(Post.sender_id == user_id or Post.recipient_id == user_id)
+    # return render_template('posts/account.html', posts=posts)
